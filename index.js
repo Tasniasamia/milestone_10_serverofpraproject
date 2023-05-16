@@ -80,6 +80,15 @@ async function run() {
     const result = await collection3.updateOne(filter, updateDoc);
     res.send(result);
     })
+    app.get('/productsbyemail',async(req,res)=>{
+        console.log(req?.query?.email);
+        let query={};
+        if(req?.query?.email){
+          query={email:req?.query?.email}
+        }
+        const result=await collection2.find(query).toArray();
+        res.send(result);
+    })
     app.get('/admindata',async(req,res)=>{
         const cursor =await collection3.find().toArray();
         console.log(cursor);
@@ -97,17 +106,17 @@ async function run() {
         console.log(cursor);
         res.send(cursor);
     })
-    app.get('/products2',async(req,res)=>{
-        const cursor =await collection2.find().toArray();
-        console.log(cursor);
-        res.send(cursor);
-    })
-    app.get('/products/:id',async(req,res)=>{
-        const id=req.params.id;
-        const query = { _id:new ObjectId(id) };
-        const movie = await collection.findOne(query);
-        res.send(movie);
-    })
+    // app.get('/products2',async(req,res)=>{
+    //     const cursor =await collection2.find().toArray();
+    //     console.log(cursor);
+    //     res.send(cursor);
+    // })
+    // app.get('/products/:id',async(req,res)=>{
+    //     const id=req.params.id;
+    //     const query = { _id:new ObjectId(id) };
+    //     const movie = await collection.findOne(query);
+    //     res.send(movie);
+    // })
     
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
