@@ -31,6 +31,21 @@ async function run() {
 
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    function verifyjwt(req,res,next){
+        const authorization=req.headers.authorization;
+        if(!authorization){
+return res.status(400).send({error:true,message:"unauthorized user"})
+        };
+        const token=req.headers.authorization.split(' ')[1];
+        jwt.verify(token, process.env.SECRET_KEY, function(err, decoded) {
+            if(err){
+                return res.status(401).send({error:true,message:"unauthorized user"})
+
+            }
+           req.decoded=decoded;
+            next();
+          });
+    }
     app.post('/aditems',async(req,res)=>{
         const products=req.body;
         console.log(products);
@@ -80,7 +95,16 @@ async function run() {
     const result = await collection3.updateOne(filter, updateDoc);
     res.send(result);
     })
-    app.get('/productsbyemail',async(req,res)=>{
+    app.post('/jwt',(req,res)=>{
+    const user=req.body;
+    const secret=process.env.SECRET_KEY;
+    console.log(user);
+    var token= jwt.sign(user,secret,{ expiresIn: '1h' });
+    console.log(token);
+    res.send({token});
+    })
+    app.get('/productsbyemail',verifyjwt,async(req,res)=>{
+        const decod=req.decoded;
         console.log(req?.query?.email);
         let query={};
         if(req?.query?.email){
