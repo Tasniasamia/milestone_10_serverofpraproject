@@ -47,6 +47,7 @@ return res.status(400).send({error:true,message:"unauthorized user"})
           });
     }
     app.post('/aditems',async(req,res)=>{
+
         const products=req.body;
         console.log(products);
         const result = await collection.insertOne(products);
@@ -103,6 +104,10 @@ return res.status(400).send({error:true,message:"unauthorized user"})
     console.log(token);
     res.send({token});
     })
+    app.get('/collectiondatalength',async(req,res)=>{
+        const dataLength = await collection.countDocuments();
+        res.send({ length: dataLength });
+    })
     app.get('/productsbyemail',verifyjwt,async(req,res)=>{
         const decod=req.decoded;
         console.log(req?.query?.email);
@@ -126,9 +131,14 @@ return res.status(400).send({error:true,message:"unauthorized user"})
     })
   
     app.get('/products',async(req,res)=>{
-        const cursor =await collection.find().toArray();
-        console.log(cursor);
-        res.send(cursor);
+
+    const {currentPage , itemsPerPage} = req.query;
+  const pageNumber = parseInt(currentPage);
+  const limitNumber = parseInt(itemsPerPage);
+  const products = await collection.find() .skip((pageNumber - 1) * limitNumber).limit(limitNumber).toArray();
+        // const cursor =await collection.find().toArray();
+        console.log(products);
+        res.send(products);
     })
     // app.get('/products2',async(req,res)=>{
     //     const cursor =await collection2.find().toArray();
