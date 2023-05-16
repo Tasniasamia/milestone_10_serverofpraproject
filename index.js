@@ -50,13 +50,48 @@ async function run() {
         console.log(admins);
         const result = await collection3.insertOne(admins);
         res.send(result);
-        console.log(result);
+        // console.log(result);
     })
-    // app.get('/admindata',async(req,res)=>{
-    //     const cursor =await collection3.find().toArray();
-    //     console.log(cursor);
-    //     res.send(cursor);
-    // })
+    app.delete("/admindelete/:id",async(req,res)=>{
+        const id=req.params.id;
+        console.log(id);
+        const ids={ _id: new ObjectId(id) }
+        const result = await collection3.deleteOne(ids);
+        res.send(result);
+
+    })
+    app.put('/adminupdate/:id',async(req,res)=>{
+        const id=req.params.id;
+        const user=req.body;
+        const filter = { _id:new ObjectId(id)};
+        // const options = { upsert: true };
+
+
+    const updateDoc = {
+
+      $set: {
+
+        ...user
+    
+
+      },
+
+    };
+    const result = await collection3.updateOne(filter, updateDoc);
+    res.send(result);
+    })
+    app.get('/admindata',async(req,res)=>{
+        const cursor =await collection3.find().toArray();
+        console.log(cursor);
+        res.send(cursor);
+    })
+    app.get('/admindata/:id',async(req,res)=>{
+        const id=req.params.id;
+        const query = { _id:new ObjectId(id) };
+        const movie = await collection3.findOne(query);
+        res.send(movie);  
+    })
+  
     app.get('/products',async(req,res)=>{
         const cursor =await collection.find().toArray();
         console.log(cursor);
