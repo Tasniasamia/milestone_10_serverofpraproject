@@ -19,6 +19,10 @@ const client = new MongoClient(uri, {
     strict: true,
     deprecationErrors: true,
   }
+//   ,
+//   useNewUrlParser:true,
+//   useUnifiedTopology:true,
+//   maxPoolSize:150
 });
 
 async function run() {
@@ -30,7 +34,12 @@ async function run() {
     const collection3=database.collection("itemcollection3")
 
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect((err)=>{
+    //     if(err){
+    //       console.error(err);
+    //       return;
+    //     }
+    //         });
     function verifyjwt(req,res,next){
         const authorization=req.headers.authorization;
         if(!authorization){
